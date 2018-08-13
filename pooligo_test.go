@@ -9,11 +9,11 @@ import (
 
 const (
 	workerPoolSmall = 10
-	workerPoolLarge = 100
+	workerPoolLarge = 1024
 	queueSizeSmall  = 5
-	queueSizeLarge  = 50
+	queueSizeLarge  = 80
 	// How many jobs to run through the test pools
-	jobCount = 100
+	jobCount = 10000
 )
 
 var (
