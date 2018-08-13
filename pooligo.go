@@ -32,7 +32,7 @@ func (p *pool) SetClosed() {
 
 // Add is used to add a job to the worker-pool
 func (p *pool) Add(j job) {
-	if p.closed.Load() == true {
+	if p.closed.Load() != true {
 		p.queue <- j
 	}
 }
@@ -72,7 +72,7 @@ func NewPool(workerCount, queueSize int) Pooli {
 		cancelFunc: cancel,
 		queue:      q,
 	}
-	p.closed.Store(true)
+	p.closed.Store(false)
 
 	// Create workers
 	for i := 0; i < queueSize; i++ {
