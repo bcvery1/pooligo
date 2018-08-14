@@ -13,10 +13,7 @@ type pool struct {
 	workerCount int
 }
 
-// SetClosed marks the pool as closed
-// This will prevent additional jobs being added.  It will not force quit any
-// currently running jobs.
-func (p *pool) SetClosed() {
+func (p *pool) setClosed() {
 	p.closed.Store(true)
 }
 
