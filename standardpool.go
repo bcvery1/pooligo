@@ -5,20 +5,20 @@ import (
 	"sync/atomic"
 )
 
-// pool struct representing a standard worker-pool
-type pool struct {
+// Pool struct representing a standard worker-pool
+type Pool struct {
 	cancelFunc  context.CancelFunc
 	queue       chan<- job
 	closed      atomic.Value
 	workerCount int
 }
 
-func (p *pool) setClosed() {
+func (p *Pool) setClosed() {
 	p.closed.Store(true)
 }
 
 // Add is used to add a job to the worker-pool
-func (p *pool) Add(j job) {
+func (p *Pool) Add(j job) {
 	if p.closed.Load() != true {
 		p.queue <- j
 	}
@@ -26,17 +26,17 @@ func (p *pool) Add(j job) {
 
 // Close will stop any workers doing any jobs added after calling Close
 // Any jobs being processed will be completed
-func (p *pool) Close() {
+func (p *Pool) Close() {
 	p.cancelFunc()
 }
 
 // Size returns the current size of the worker pool.
-func (p *pool) Size() int {
+func (p *Pool) Size() int {
 	return p.workerCount
 }
 
 // NewPool creates a standard worker pool
-func NewPool(workerCount, queueSize int) Pooli {
+func NewPool(workerCount, queueSize int) *Pool {
 	// Create a context
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -44,7 +44,7 @@ func NewPool(workerCount, queueSize int) Pooli {
 	q := make(chan job, queueSize)
 
 	// Create the pool
-	p := &pool{
+	p := &Pool{
 		cancelFunc:  cancel,
 		queue:       q,
 		workerCount: workerCount,
