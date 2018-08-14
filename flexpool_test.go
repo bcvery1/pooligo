@@ -60,7 +60,7 @@ func TestFlexPoolSizeChange(t *testing.T) {
 	p.Grow(1)
 	// Check the new size
 	if p.Size() != workerPoolSmall+1 {
-		t.Errorf("Expect pool size of %d, got: %d", workerPoolSmall+1, p.Size())
+		t.Errorf("Expect pool size of %d, got: %d - After growing by 1", workerPoolSmall+1, p.Size())
 	}
 
 	// Check a negative shrink request fails
@@ -73,7 +73,7 @@ func TestFlexPoolSizeChange(t *testing.T) {
 	}
 
 	// Check pool cannot be shrunk by more than the pool size
-	if p.Shrink(p.Size()+100) == nil {
+	if p.Shrink(p.Size()+1) == nil {
 		t.Errorf("Failed to error when shrinking by greater than pool size")
 	}
 	// Check the size hasn't changed
