@@ -5,7 +5,8 @@ import (
 	"sync/atomic"
 )
 
-// Pooli an interface to allow additional of additional pool types
+// Pooli an interface to pool types.  All pools returned by this module will be
+// implement Pooli.
 type Pooli interface {
 	Add(job)
 	Close()
