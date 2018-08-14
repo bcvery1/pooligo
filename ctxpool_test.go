@@ -3,55 +3,12 @@ package pooligo
 import (
 	"context"
 	"testing"
-	"time"
 )
 
 func TestNewCtxPool(t *testing.T) {
-	counter = 0
-
-	// Create pool and test job
-	p := NewCtxPool(context.Background(), workerPoolSmall, queueSizeSmall)
-
-	// Check the size of the pool
-	if p.Size() != workerPoolSmall {
-		t.Errorf("Expect pool size of %d, got: %d", workerPoolSmall, p.Size())
+	if err := testPoolCreation(NewCtxPool(context.Background(), workerPoolSmall, queueSizeSmall)); err != nil {
+		t.Errorf(err.Error())
 	}
-
-	// Loop adding all jobs
-	wg.Add(jobCount)
-	tj := testJob{}
-	for i := 0; i < jobCount; i++ {
-		p.Add(tj)
-	}
-
-	// Allow time for workers to finish
-	wg.Wait()
-
-	// Check the counter has been increased sufficiently
-	if counter != jobCount {
-		t.Errorf("Incorrect number of jobs ran.  Expected %d, got %d", jobCount, counter)
-	}
-
-	// Close the context
-	p.Close()
-	// Allow time for the channel to close
-	time.Sleep(500 * time.Millisecond)
-
-	// Add another job to the pool
-	// Add to the wait group so we don't get a negative counter
-	wg.Add(1)
-	p.Add(tj)
-
-	// Allow time for workers to finish
-	// Note: they shouldn't be working anyway - this pause if for if it is broken
-	time.Sleep(500 * time.Millisecond)
-
-	if counter != jobCount {
-		t.Errorf("Workers running after pool closed.  Ran %d jobs", counter-jobCount)
-	}
-
-	// Clear the waitgroup addition not done after closing
-	wg.Done()
 }
 
 // Check how fast a small work/job queue pool runs
