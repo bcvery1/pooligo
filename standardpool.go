@@ -30,6 +30,7 @@ func (p *pool) Close() {
 	p.cancelFunc()
 }
 
+// Size returns the current size of the worker pool.
 func (p *pool) Size() int {
 	return p.workerCount
 }
