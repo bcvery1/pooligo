@@ -10,6 +10,7 @@ type Pooli interface {
 	Add(job)
 	Close()
 	SetClosed()
+	Size() int
 }
 
 type job interface {

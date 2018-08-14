@@ -7,9 +7,10 @@ import (
 
 // pool struct representing a standard worker-pool
 type pool struct {
-	cancelFunc context.CancelFunc
-	queue      chan<- job
-	closed     atomic.Value
+	cancelFunc  context.CancelFunc
+	queue       chan<- job
+	closed      atomic.Value
+	workerCount int
 }
 
 // SetClosed marks the pool as closed
@@ -32,6 +33,10 @@ func (p *pool) Close() {
 	p.cancelFunc()
 }
 
+func (p *pool) Size() int {
+	return p.workerCount
+}
+
 // NewPool creates a standard worker pool
 func NewPool(workerCount, queueSize int) Pooli {
 	// Create a context
@@ -42,8 +47,9 @@ func NewPool(workerCount, queueSize int) Pooli {
 
 	// Create the pool
 	p := &pool{
-		cancelFunc: cancel,
-		queue:      q,
+		cancelFunc:  cancel,
+		queue:       q,
+		workerCount: workerCount,
 	}
 	p.closed.Store(false)
 
