@@ -11,7 +11,7 @@ import (
 // shrunk after creation
 type Flexpool struct {
 	cancelFunc context.CancelFunc
-	queue      chan job
+	queue      chan Job
 	closed     atomic.Value
 
 	// ctx carries the context for this pool.  Not ideal practise to store the
@@ -28,7 +28,7 @@ func (p *Flexpool) setClosed() {
 }
 
 // Add is used to add a job to the worker-pool.
-func (p *Flexpool) Add(j job) {
+func (p *Flexpool) Add(j Job) {
 	if p.closed.Load() != true {
 		p.queue <- j
 	}
@@ -91,7 +91,7 @@ func NewFlexPool(workerCount, queueSize int) *Flexpool {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	// Create the queue
-	q := make(chan job, queueSize)
+	q := make(chan Job, queueSize)
 
 	// Create the pool
 	p := &Flexpool{

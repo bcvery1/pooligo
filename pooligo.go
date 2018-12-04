@@ -8,7 +8,7 @@ import (
 // implement Pooli.
 type Pooli interface {
 	// Add will add a job to the worker pool.  This will be process asychronously.
-	Add(job)
+	Add(Job)
 
 	// Close will stop any new jobs being added and/or processed.  Close will not
 	// force stop any currently running jobs, unless specific pool types allow
@@ -23,14 +23,16 @@ type Pooli interface {
 	Size() int
 }
 
-type job interface {
+// Job is the interface which is accepted by the `Pooli` interface, upon which
+// work will be done
+type Job interface {
 	Action()
 }
 
 // runWorker will create a worker on the queue provided
 // The worker will stop accepting jobs after the context is cancelled
-func runWorker(ctx context.Context, jobQueue <-chan job, p Pooli) {
-	go func(q <-chan job) {
+func runWorker(ctx context.Context, jobQueue <-chan Job, p Pooli) {
+	go func(q <-chan Job) {
 		for {
 			select {
 			case j := <-jobQueue:
