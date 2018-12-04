@@ -9,7 +9,7 @@ import (
 // If you do not need to explicitly pass in a context, use `Pool` (from `NewPool()`)
 type CtxPool struct {
 	cancelFunc  context.CancelFunc
-	queue       chan<- job
+	queue       chan<- Job
 	closed      atomic.Value
 	workerCount int
 }
@@ -19,7 +19,7 @@ func (p *CtxPool) setClosed() {
 }
 
 // Add is used to add a job to the worker-pool
-func (p *CtxPool) Add(j job) {
+func (p *CtxPool) Add(j Job) {
 	if p.closed.Load() != true {
 		p.queue <- j
 	}
@@ -42,7 +42,7 @@ func NewCtxPool(parentCtx context.Context, workerCount, queueSize int) *CtxPool 
 	ctx, cancel := context.WithCancel(parentCtx)
 
 	// Create the queue
-	q := make(chan job, queueSize)
+	q := make(chan Job, queueSize)
 
 	// Create the pool
 	p := &CtxPool{
